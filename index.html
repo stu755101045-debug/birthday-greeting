@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday | Sinh nhật</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #ffeaf6;
+    }
+    canvas#decorCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .center-content {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      background: rgba(255,234,246,0.12);
+      animation: fadein 1.2s;
+    }
+    @keyframes fadein {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .birthday-text {
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #ff3380;
+      text-shadow:
+        2px 8px 28px #fff,
+        0 0 2px #fff,
+        2px 2px 5px #fd8ba1;
+      margin-bottom: 48px;
+      letter-spacing: 8px;
+      font-family: 'Segoe Script', 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      user-select: none;
+    }
+    .next-btn, .letter-btn {
+      padding: 13px 44px;
+      font-size: 1.12rem;
+      background: linear-gradient(90deg,#fd5e9b,#ffb6c1 90%);
+      color: white;
+      border: none;
+      border-radius: 32px;
+      box-shadow: 0 4px 32px #fd8ba122;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 2px;
+      transition: background 0.2s, transform 0.1s;
+      outline: none;
+      margin-top: 28px;
+    }
+    .next-btn:hover, .letter-btn:hover {
+      background: linear-gradient(90deg,#ff3380,#fd8ba1 90%);
+      transform: scale(1.05);
+    }
+    .hide { display: none !important; }
+
+    .pig-container-center {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      width: 100vw;
+      height: 56px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      animation: pig-run-center 7s linear infinite alternate;
+    }
+    @keyframes pig-run-center {
+      0% {
+        transform: translateY(-50%) translateX(0);
+      }
+      100% {
+        transform: translateY(-50%) translateX(calc(100vw - 66px));
+      }
+    }
+    .pig-svg {
+      width: 66px;
+      height: 48px;
+      display: block;
+    }
+    .download-text {
+      position: fixed;
+      width: 100vw;
+      left: 0;
+      top: calc(50% + 56px);
+      margin-top: 14px;
+      text-align: center;
+      font-size: 1.28rem;
+      color: #ea4d8e;
+      font-family: 'Segoe Script', 'Comic Sans MS', cursive, sans-serif;
+      z-index: 3;
+      letter-spacing: 1.2px;
+    }
+
+    .letter-content {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: fadein 1.1s;
+      background: rgba(255,234,246,0.12);
+    }
+    .letter-svg {
+      width: 148px;
+      height: 120px;
+      display: block;
+      margin-bottom: 22px;
+    }
+    .letter-for-you {
+      font-size: 1.55rem;
+      color: #ea4d8e;
+      text-align: center;
+      font-family: 'Segoe Script', 'Comic Sans MS', cursive, sans-serif;
+      margin-bottom: 6px;
+    }
+    .letter-btns {
+      display: flex;
+      gap: 30px;
+      margin-top: 17px;
+    }
+
+    .film-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,234,246,0.2);
+      animation: fadein 1s;
+    }
+
+    .film-vertical-wrapper {
+      width: 320px;
+      height: 85vh;
+      overflow: hidden;
+      background: rgba(255,255,255,0.3);
+      border-radius: 18px;
+      box-shadow: 0 8px 40px #fd8ba166, 0 0 0 12px #fff4;
+      border: 4px solid #ee90bb44;
+      position: relative;
+      margin: 24px auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .film-vertical-scroller {
+      width: 100%;
+      animation: scrollfilm 20s linear forwards;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      padding-top: 0;
+    }
+
+    @keyframes scrollfilm {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(calc(-100% - 22px)); }
+    }
+
+    .film-photo {
+      width: 97%;
+      border-radius: 13px;
+      box-shadow: 0 2px 18px #fd8ba122;
+      background: #fff;
+      object-fit: cover;
+      max-height: 380px;
+      margin: auto;
+      border: 2px solid #fff9;
+      flex-shrink: 0;
+    }
+
+    .final-letter-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 234, 246, 0.28);
+      animation: fadein 1.2s;
+    }
+
+    .cute-letter-box {
+      width: 82%;
+      max-width: 520px;
+      max-height: 72vh;
+      overflow-y: auto;
+      padding: 32px 28px;
+      border-radius: 28px;
+      background: linear-gradient(180deg,#fff7fb,#ffe6f1);
+      border: 4px solid #ffb6d1;
+      box-shadow: 0 8px 35px rgba(255,105,180,0.25);
+      position: relative;
+    }
+
+    .cute-letter-box::before {
+      content: '💌';
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      background: #fff0f6;
+      border-radius: 50%;
+      padding: 6px 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .final-title {
+      text-align: center;
+      font-size: 2rem;
+      color: #ff4f9a;
+      font-family: 'Segoe Script', 'Comic Sans MS', cursive;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+
+    .final-message {
+      color: #c94f7c;
+      font-size: 1.18rem;
+      line-height: 1.9;
+      text-align: center;
+      font-family: 'Comic Sans MS', cursive;
+      white-space: pre-line;
+    }
+
+    .cute-letter-box::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .cute-letter-box::-webkit-scrollbar-thumb {
+      background: #ffb6d1;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="decorCanvas"></canvas>
+  
+  <!-- Nhạc nền tự động phát -->
+  <audio id="bgMusic" autoplay loop style="display: none;">
+    <source src="happy.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="center-content" id="welcomeScreen">
+    <div class="birthday-text">HAPPY BIRTHDAY</div>
+    <button class="next-btn" id="nextBtn">Next</button>
+  </div>
+
+  <div id="pigRunScreen" class="hide">
+    <div class="pig-container-center">
+      <svg class="pig-svg" viewBox="0 0 66 48" fill="none">
+        <ellipse cx="33" cy="30" rx="25" ry="13" fill="#ffb1ca" />
+        <ellipse cx="48" cy="26" rx="13" ry="10" fill="#ffd2e3" />
+        <ellipse cx="45" cy="13" rx="6" ry="4" fill="#ffd2e3" transform="rotate(-17 45 13)"/>
+        <ellipse cx="56" cy="15" rx="4.5" ry="3" fill="#ffd2e3" transform="rotate(-28 56 15)"/>
+      </svg>
+    </div>
+    <div class="download-text">download ...</div>
+  </div>
+
+  <div id="letterScreen" class="letter-content hide">
+    <svg class="letter-svg" viewBox="0 0 128 100" fill="none">
+      <rect x="10" y="22" width="108" height="60" rx="11" fill="#ffe6eb" stroke="#fd8ba1" stroke-width="2.5"/>
+      <polygon points="12,24 64,7 116,24" fill="#fffafd" stroke="#fd8ba1" stroke-width="2.5"/>
+    </svg>
+    <div class="letter-for-you">letter for you &lt;3</div>
+    <div class="letter-btns">
+      <button class="letter-btn" id="letterBackBtn">Go Back</button>
+      <button class="letter-btn" id="letterNextBtn">Next</button>
+    </div>
+  </div>
+
+  <div id="filmScreen" class="film-screen hide">
+    <div class="film-vertical-wrapper">
+      <div class="film-vertical-scroller" id="filmScroller">
+        <img class="film-photo" src="https://drive.google.com/file/d/1t6ZNvSiNCS9oJ43SJqWt1ZJkiyy_G7Gu/view?usp=sharing" alt="photo 1"/>
+        <img class="film-photo" src="https://drive.google.com/file/d/11GY3iovL8JsRnbGdrKlVtjYMLxmegVKG/view?usp=sharing" alt="photo 1"/>
+        <img class="film-photo" src="pmai1.png" alt="photo 2"/>
+        <img class="film-photo" src="pmai2.png" alt="photo 3"/>
+        <img class="film-photo" src="pmai3.png" alt="photo 4"/>
+        <img class="film-photo" src="pmai4.png" alt="photo 5"/>
+        <img class="film-photo" src="pmai5.png" alt="photo 6"/>
+        <img class="film-photo" src="pmai6.png" alt="photo 7"/>
+        <img class="film-photo" src="pmai7.png" alt="photo 8"/>
+        <img class="film-photo" src="pmai8.png" alt="photo 9"/>
+        <img class="film-photo" src="pmai9.png" alt="photo 10"/>
+        <img class="film-photo" src="pmai10.png" alt="photo 11"/>
+        <img class="film-photo" src="pmai11.png" alt="photo 12"/>
+        <img class="film-photo" src="pmai12.png" alt="photo 13"/>
+        <img class="film-photo" src="pmai13.png" alt="photo 14"/>
+        <img class="film-photo" src="pmai14.png" alt="photo 15"/>
+      </div>
+    </div>
+  </div>
+
+  <div id="finalLetterScreen" class="final-letter-screen hide">
+    <div class="cute-letter-box">
+      <div class="final-title">For You ✨</div>
+      <div class="final-message">
+Chúc mày có một sinh nhật vui vẻ,
+
+Tuổi mới thật nhiều niềm vui, sức khỏe và luôn thành công trong cuộc sống!
+
+Mong rằng mọi điều tốt đẹp nhất sẽ đến với mày, luôn giữ được nụ cười thật tươi và gặp thật nhiều may mắn trên chặng đường phía trước 💖
+
+Happy Birthday 🎂✨
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const colors = [
+      '#FFF176', '#FFD54F', '#FFB300',
+      '#E57373', '#BA68C8', '#81C784',
+      '#4FC3F7', '#f06292', '#f8bbd0', '#fff', '#ff8b6e'
+    ];
+
+    function rand(a, b) {
+      return Math.random() * (b - a) + a;
+    }
+
+    const canvas = document.getElementById('decorCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+
+    let confettiList = [];
+
+    for (let i = 0; i < 80; i++) {
+      confettiList.push({
+        x: rand(0, width),
+        y: rand(-height, 0),
+        w: rand(5, 12),
+        h: rand(10, 20),
+        color: colors[Math.floor(rand(0, colors.length))],
+        angle: rand(0, Math.PI * 2),
+        speed: rand(1.1, 2.8),
+        rotate: rand(-0.05, 0.05),
+        sway: rand(0.6, 1.6)
+      });
+    }
+
+    function drawConfetti(c) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.translate(c.x, c.y);
+      ctx.rotate(c.angle);
+      ctx.fillStyle = c.color;
+      ctx.globalAlpha = 0.93;
+      ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      confettiList.forEach(c => {
+        c.y += c.speed;
+        c.x += Math.sin(c.y / 22) * c.sway;
+        c.angle += c.rotate;
+
+        drawConfetti(c);
+
+        if (c.y > height + 30) {
+          c.y = rand(-80, -10);
+          c.x = rand(0, width);
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Tự động phát nhạc khi tải trang
+    const bgMusic = document.getElementById('bgMusic');
+    bgMusic.volume = 0.5;
+   // Phát nhạc khi người dùng click lần đầu
+document.getElementById('nextBtn').onclick = function () {
+  bgMusic.muted = false;
+  bgMusic.play().catch(e => console.log('Lỗi:', e));
+  
+  document.getElementById('welcomeScreen').classList.add('hide');
+  document.getElementById('pigRunScreen').classList.remove('hide');
+
+      setTimeout(function () {
+        document.getElementById('pigRunScreen').classList.add('hide');
+        document.getElementById('letterScreen').classList.remove('hide');
+      }, 8000);
+    };
+
+    document.getElementById('letterBackBtn').onclick = function () {
+      document.getElementById('letterScreen').classList.add('hide');
+      document.getElementById('pigRunScreen').classList.remove('hide');
+
+      setTimeout(function () {
+        document.getElementById('pigRunScreen').classList.add('hide');
+        document.getElementById('letterScreen').classList.remove('hide');
+      }, 1000);
+    };
+
+    document.getElementById('letterNextBtn').onclick = function () {
+      document.getElementById('letterScreen').classList.add('hide');
+      document.getElementById('filmScreen').classList.remove('hide');
+
+      // Film chạy tự động 20 giây rồi chuyển sang bức thư cuối
+      setTimeout(function () {
+        document.getElementById('filmScreen').classList.add('hide');
+        document.getElementById('finalLetterScreen').classList.remove('hide');
+      }, 20000);
+    };
+  </script>
+</body>
+</html>
