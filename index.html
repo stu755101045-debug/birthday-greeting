@@ -20,6 +20,93 @@
       pointer-events: none;
       z-index: 1;
     }
+
+    /* Màn hình mật khẩu */
+    .password-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 234, 246, 0.95);
+      animation: fadein 1s;
+    }
+
+    .password-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 40px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(255, 105, 180, 0.3);
+      border: 3px solid #ffb6d1;
+    }
+
+    .password-title {
+      font-size: 2rem;
+      color: #ff3380;
+      font-family: 'Segoe Script', 'Comic Sans MS', cursive;
+      text-align: center;
+      margin: 0;
+    }
+
+    .password-input {
+      width: 280px;
+      padding: 14px 20px;
+      font-size: 1.2rem;
+      border: 2px solid #ffb6d1;
+      border-radius: 12px;
+      text-align: center;
+      letter-spacing: 3px;
+      font-weight: bold;
+      color: #ff3380;
+      transition: border-color 0.3s;
+    }
+
+    .password-input:focus {
+      outline: none;
+      border-color: #ff3380;
+      box-shadow: 0 0 10px rgba(255, 51, 128, 0.3);
+    }
+
+    .password-input::placeholder {
+      color: #ffb6d1;
+      letter-spacing: 2px;
+    }
+
+    .password-btn {
+      padding: 12px 40px;
+      font-size: 1.1rem;
+      background: linear-gradient(90deg, #fd5e9b, #ffb6c1 90%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(253, 94, 155, 0.3);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.1s;
+    }
+
+    .password-btn:hover {
+      background: linear-gradient(90deg, #ff3380, #fd8ba1 90%);
+      transform: scale(1.05);
+    }
+
+    .password-error {
+      color: #e74c3c;
+      font-size: 0.95rem;
+      text-align: center;
+      font-weight: 600;
+      min-height: 20px;
+    }
+
     .center-content {
       position: absolute;
       top: 0; left: 0;
@@ -215,33 +302,14 @@
       width: 82%;
       max-width: 520px;
       max-height: 72vh;
-      overflow-y: auto;  /* ← Cho phép cuộn */
+      overflow-y: auto;
       padding: 32px 28px;
       border-radius: 28px;
       background: linear-gradient(180deg,#fff7fb,#ffe6f1);
       border: 4px solid #ffb6d1;
       box-shadow: 0 8px 35px rgba(255,105,180,0.25);
       position: relative;
-}
-
-/* Thanh cuộn đẹp */
-    .cute-letter-box::-webkit-scrollbar {
-      width: 8px;
-}
-
-    .cute-letter-box::-webkit-scrollbar-track {
-      background: rgba(255, 182, 209, 0.2);
-      border-radius: 10px;
-}
-
-    .cute-letter-box::-webkit-scrollbar-thumb {
-      background: #ffb6d1;
-      border-radius: 10px;
-}
-
-   .cute-letter-box::-webkit-scrollbar-thumb:hover {
-     background: #ff8ba1;
-}
+    }
 
     .cute-letter-box::before {
       content: '💌';
@@ -278,9 +346,18 @@
       width: 8px;
     }
 
+    .cute-letter-box::-webkit-scrollbar-track {
+      background: rgba(255, 182, 209, 0.2);
+      border-radius: 10px;
+    }
+
     .cute-letter-box::-webkit-scrollbar-thumb {
       background: #ffb6d1;
-      border-radius: 20px;
+      border-radius: 10px;
+    }
+
+    .cute-letter-box::-webkit-scrollbar-thumb:hover {
+      background: #ff8ba1;
     }
   </style>
 </head>
@@ -288,11 +365,27 @@
   <canvas id="decorCanvas"></canvas>
   
   <!-- Nhạc nền tự động phát -->
-  <audio id="bgMusic" autoplay loop style="display: none;">
+  <audio id="bgMusic" autoplay loop muted style="display: none;">
     <source src="happy.mp3" type="audio/mpeg">
   </audio>
 
-  <div class="center-content" id="welcomeScreen">
+  <!-- Màn hình mật khẩu -->
+  <div class="password-screen" id="passwordScreen">
+    <div class="password-container">
+      <h1 class="password-title">🎂 Nhập Mật Khẩu 🎂</h1>
+      <input 
+        type="password" 
+        class="password-input" 
+        id="passwordInput" 
+        placeholder="Nhập mật khẩu"
+        autocomplete="off"
+      >
+      <button class="password-btn" id="passwordBtn">Xác Nhận</button>
+      <div class="password-error" id="passwordError"></div>
+    </div>
+  </div>
+
+  <div class="center-content" id="welcomeScreen" style="display: none;">
     <div class="birthday-text">HAPPY BIRTHDAY</div>
     <button class="next-btn" id="nextBtn">Next</button>
   </div>
@@ -325,21 +418,21 @@
     <div class="film-vertical-wrapper">
       <div class="film-vertical-scroller" id="filmScroller">
         <img class="film-photo" src="pmai.jpg" alt="photo 1"/>
-        <img class="film-photo" src="image.png" alt="photo 1"/>
-        <img class="film-photo" src="pmai1.png" alt="photo 2"/>
-        <img class="film-photo" src="pmai2.png" alt="photo 3"/>
-        <img class="film-photo" src="pmai3.png" alt="photo 4"/>
-        <img class="film-photo" src="pmai4.png" alt="photo 5"/>
-        <img class="film-photo" src="pmai5.png" alt="photo 6"/>
-        <img class="film-photo" src="pmai6.png" alt="photo 7"/>
-        <img class="film-photo" src="pmai7.png" alt="photo 8"/>
-        <img class="film-photo" src="pmai8.png" alt="photo 9"/>
-        <img class="film-photo" src="pmai9.png" alt="photo 10"/>
-        <img class="film-photo" src="pmai10.png" alt="photo 11"/>
-        <img class="film-photo" src="pmai11.png" alt="photo 12"/>
-        <img class="film-photo" src="pmai12.png" alt="photo 13"/>
-        <img class="film-photo" src="pmai13.png" alt="photo 14"/>
-        <img class="film-photo" src="pmai14.png" alt="photo 15"/>
+        <img class="film-photo" src="image.png" alt="photo 2"/>
+        <img class="film-photo" src="pmai1.png" alt="photo 3"/>
+        <img class="film-photo" src="pmai2.png" alt="photo 4"/>
+        <img class="film-photo" src="pmai3.png" alt="photo 5"/>
+        <img class="film-photo" src="pmai4.png" alt="photo 6"/>
+        <img class="film-photo" src="pmai5.png" alt="photo 7"/>
+        <img class="film-photo" src="pmai6.png" alt="photo 8"/>
+        <img class="film-photo" src="pmai7.png" alt="photo 9"/>
+        <img class="film-photo" src="pmai8.png" alt="photo 10"/>
+        <img class="film-photo" src="pmai9.png" alt="photo 11"/>
+        <img class="film-photo" src="pmai10.png" alt="photo 12"/>
+        <img class="film-photo" src="pmai11.png" alt="photo 13"/>
+        <img class="film-photo" src="pmai12.png" alt="photo 14"/>
+        <img class="film-photo" src="pmai13.png" alt="photo 15"/>
+        <img class="film-photo" src="pmai14.png" alt="photo 16"/>
       </div>
     </div>
   </div>
@@ -348,11 +441,9 @@
     <div class="cute-letter-box">
       <div class="final-title">For You ✨</div>
       <div class="final-message">
-Chúc mày có một sinh nhật vui vẻ,
-
-Tuổi mới thật nhiều niềm vui, sức khỏe và luôn thành công trong cuộc sống!
-
-Mong rằng mọi điều tốt đẹp nhất sẽ đến với mày, luôn giữ được nụ cười thật tươi và gặp thật nhiều may mắn trên chặng đường phía trước 💖
+Surprise!!!!
+        Phương Mai thân mến,
+        Chúc mừng sinh nhật cậu nhé 
 
 Happy Birthday 🎂✨
       </div>
@@ -360,6 +451,9 @@ Happy Birthday 🎂✨
   </div>
 
   <script>
+    const PASSWORD = "17507";  // ← Mật khẩu (thay đổi ở đây)
+    const bgMusic = document.getElementById('bgMusic');
+
     const colors = [
       '#FFF176', '#FFD54F', '#FFB300',
       '#E57373', '#BA68C8', '#81C784',
@@ -434,16 +528,50 @@ Happy Birthday 🎂✨
 
     animate();
 
-    // Tự động phát nhạc khi tải trang
-    const bgMusic = document.getElementById('bgMusic');
-    bgMusic.volume = 0.5;
-   // Phát nhạc khi người dùng click lần đầu
-document.getElementById('nextBtn').onclick = function () {
-  bgMusic.muted = false;
-  bgMusic.play().catch(e => console.log('Lỗi:', e));
-  
-  document.getElementById('welcomeScreen').classList.add('hide');
-  document.getElementById('pigRunScreen').classList.remove('hide');
+    // ==================== QUẢN LÝ MẬT KHẨU ====================
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordBtn = document.getElementById('passwordBtn');
+    const passwordError = document.getElementById('passwordError');
+    const passwordScreen = document.getElementById('passwordScreen');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+
+    function checkPassword() {
+      const input = passwordInput.value.trim();
+      
+      if (input === PASSWORD) {
+        // ✅ Mật khẩu đúng
+        passwordError.textContent = '';
+        passwordScreen.classList.add('hide');
+        welcomeScreen.style.display = 'flex';
+        
+        // Phát nhạc
+        bgMusic.muted = false;
+        bgMusic.play().catch(e => console.log('Lỗi:', e));
+      } else {
+        // ❌ Mật khẩu sai
+        passwordError.textContent = '❌ Mật khẩu không đúng!';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    }
+
+    // Click nút Xác Nhận
+    passwordBtn.addEventListener('click', checkPassword);
+
+    // Ấn Enter để xác nhận
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        checkPassword();
+      }
+    });
+
+    // Focus vào input khi tải trang
+    passwordInput.focus();
+
+    // ==================== ĐIỀU KHIỂN CHÍNH ====================
+    document.getElementById('nextBtn').onclick = function () {
+      document.getElementById('welcomeScreen').classList.add('hide');
+      document.getElementById('pigRunScreen').classList.remove('hide');
 
       setTimeout(function () {
         document.getElementById('pigRunScreen').classList.add('hide');
@@ -465,7 +593,6 @@ document.getElementById('nextBtn').onclick = function () {
       document.getElementById('letterScreen').classList.add('hide');
       document.getElementById('filmScreen').classList.remove('hide');
 
-      // Film chạy tự động 20 giây rồi chuyển sang bức thư cuối
       setTimeout(function () {
         document.getElementById('filmScreen').classList.add('hide');
         document.getElementById('finalLetterScreen').classList.remove('hide');
